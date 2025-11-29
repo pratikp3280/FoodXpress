@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<%@ include file="WEB-INF/jsp/shared/head.jspf" %>
-<%@ include file="WEB-INF/jsp/shared/header.jspf" %>
+<%@ include file="jsp/shared/head.jspf" %>
+<%@ include file="jsp/shared/header.jspf" %>
 
 <!-- MAIN LANDING PAGE -->
 <div class="main-content">
@@ -18,8 +18,12 @@
                 </p>
 
                 <div class="hero-buttons">
-                    <a href="UserServlet?action=loginPage" class="btn btn--primary">Start Ordering</a>
-                    <a href="UserServlet?action=registerPage" class="btn btn--secondary">View Offers</a>
+                	<a href="${pageContext.request.contextPath}/user?action=login"  class="btn btn--secondary">
+   						Sign In
+					</a>
+
+                    <a href="${pageContext.request.contextPath}/user?action=register" class="btn btn--primary">New User? Register</a>
+                    <a href="${pageContext.request.contextPath}/user?action=login" class="btn btn--secondary">View Offers</a>
                 </div>
             </div>
 
@@ -77,4 +81,4 @@
 
 </div>
 
-<%@ include file="WEB-INF/jsp/shared/footer.jspf" %>
+<%@ include file="jsp/shared/footer.jspf" %>

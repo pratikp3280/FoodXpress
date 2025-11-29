@@ -30,6 +30,11 @@ This file contains:
   --border-light: #e0e0e0;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --text-dark: var(--dark-text);
+  --text-light: var(--light-text);
+  --border: var(--border-light);
+  --radius: 12px;
+  
 
   /* Spacing Scale */
   --space-1: 0.25rem; /* 4px */

@@ -186,6 +186,35 @@
 
 
 
+/* =============================== */
+/* PASSWORD TOGGLE (SHOW / HIDE)   */
+/* =============================== */
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper .form-control {
+  padding-right: 44px; /* space for icon */
+}
+
+.toggle-password {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--light-text);
+  user-select: none;
+}
+
+.toggle-password:hover {
+  color: var(--primary);
+}
+
+
+
 /* ==== FOOTER STYLING ==== */
 
 .footer {
@@ -251,3 +280,34 @@
     padding-top: 15px;
     font-size: 14px;
 }
+
+/* =============================== */
+/* LOGIN PAGE CARD ENHANCEMENT     */
+/* =============================== */
+
+.login-card {
+  box-shadow: 
+      0 8px 25px rgba(0, 0, 0, 0.15),
+      0 12px 40px rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+}
+
+/* =============================== */
+/* LOGIN PAGE GRID LAYOUT          */
+/* =============================== */
+
+.login-grid {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  gap: 40px;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .login-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
