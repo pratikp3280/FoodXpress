@@ -84,7 +84,8 @@ public class RestaurantServlet extends HttpServlet {
         req.setAttribute("restaurants", restaurants);
 
         // Forward to the JSP page
-        forward(req, resp, "/jsp/restaurantList.jsp");
+        forward(req, resp, "/jsp/customer/restaurantList.jsp");
+
     }
 
     // ----------------------------------------------------
@@ -118,7 +119,7 @@ public class RestaurantServlet extends HttpServlet {
         req.setAttribute("restaurant", restaurant);
 
         // Forward to details page
-        forward(req, resp, "/jsp/restaurantDetails.jsp");
+        forward(req, resp, "/jsp/customer/restaurantDetails.jsp");
     }
 
     // ----------------------------------------------------

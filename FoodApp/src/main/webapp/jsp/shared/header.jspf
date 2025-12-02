@@ -14,12 +14,23 @@
         <a class="nav-btn" href="${pageContext.request.contextPath}/cart">Cart</a>
 
         <c:choose>
-            <c:when test="${not empty sessionScope.loggedUser}">
-                <a class="nav-btn"
-                   href="${pageContext.request.contextPath}/user?action=logout">
-                   Logout
-                </a>
-            </c:when>
+          <c:when test="${not empty sessionScope.loggedUser}">
+    
+    <a href="${pageContext.request.contextPath}/jsp/customer/home.jsp">
+        Home
+    </a>
+
+    <a href="${pageContext.request.contextPath}/jsp/customer/profile.jsp">
+        My Profile
+    </a>
+
+    <a class="nav-btn"
+       href="${pageContext.request.contextPath}/user?action=logout">
+       Logout
+    </a>
+
+</c:when>
+
 
             <c:otherwise>
                 <a class="nav-btn"

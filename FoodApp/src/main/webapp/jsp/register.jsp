@@ -85,15 +85,21 @@
                                   placeholder="Delivery address"></textarea>
                     </div>
 
-                    <!-- PASSWORD -->
-                    <div class="form-group">
-                        <label class="form-label">New Password</label>
-                        <input type="password"
-                               name="password"
-                               class="form-control"
-                               placeholder="Create a password"
-                               required>
-                    </div>
+                   <div class="form-group">
+    <label class="form-label" for="password">New Password</label>
+
+    <div class="password-wrapper">
+        <input type="password"
+               id="password"
+               name="password"
+               class="form-control"
+               placeholder="Enter your password"
+               required />
+
+        <!-- Eye Icon -->
+        <span class="toggle-password" onclick="togglePassword()">👁️</span>
+    </div>
+</div>
 
                     <button type="submit" class="btn btn--primary" style="width:100%;">
                         Register
@@ -121,5 +127,21 @@
         </div>
     </div>
 </div>
+
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const icon = document.querySelector(".toggle-password");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.textContent = "🙈"; // hide icon
+        } else {
+            passwordInput.type = "password";
+            icon.textContent = "👁️"; // show icon
+        }
+    }
+</script>
+
 
 <%@ include file="shared/footer.jspf" %>

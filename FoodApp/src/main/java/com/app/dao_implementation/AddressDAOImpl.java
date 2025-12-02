@@ -22,10 +22,10 @@ public class AddressDAOImpl implements AddressDAO{
 	// ✅ SQL Queries
 	
 	private static final String INSERT_ADDRESS_QUERY = "INSERT INTO addresses (user_id, street, city, state, zip, landmark) VALUES (?, ?, ?, ?, ?, ?)";
-	private static final String GET_ADDRESS_BY_ID_QUERY = "SELECT * FROM addresses WHERE address_id = ?";
-	private static final String GET_ADDRESSES_BY_USER_QUERY =  "SELECT * FROM addresses WHERE user_id = ?";
+	private static final String GET_ADDRESS_BY_ID_QUERY = "SELECT * FROM addresses WHERE address_id = ? AND user_id = ?";
+	private static final String GET_ADDRESSES_BY_USER_QUERY =  "SELECT * FROM addresses WHERE user_id=?";
 	private static final String UPDATE_ADDRESS_QUERY = "UPDATE addresses SET street = ?, city = ?, state = ?, zip = ?, landmark = ? WHERE address_id = ?";
-	private static final String DELETE_ADDRESS_QUERY = "DELETE FROM addresses WHERE address_id = ?";
+	private static final String DELETE_ADDRESS_QUERY = "DELETE FROM addresses WHERE address_id=? AND user_id=?";
 	
 	
 	
@@ -58,13 +58,15 @@ public class AddressDAOImpl implements AddressDAO{
 	 // -------------------------------------------------------------------------
     // ✅ Get address by address_id
 	@Override
-	public Address getAddressById(int addressId) {
+	public Address getAddressById(int addressId, int userId) {
 		 Address address = null;
 
 	        try (Connection connection = DBConnection.getConnection();
 	             PreparedStatement pstmt = connection.prepareStatement(GET_ADDRESS_BY_ID_QUERY)) {
 
-	            pstmt.setInt(1, addressId);
+	        	pstmt.setInt(1, addressId);
+	        	pstmt.setInt(2, userId);
+
 	            ResultSet rs = pstmt.executeQuery();
 
 	            if (rs.next()) {
@@ -81,28 +83,29 @@ public class AddressDAOImpl implements AddressDAO{
 
 	
 	 // -------------------------------------------------------------------------
-    // ✅ Get all addresses for a given user_id
 	@Override
 	public List<Address> getAddressesByUserId(int userId) {
-		 List<Address> addressList = new ArrayList<>();
+	    List<Address> addressList = new ArrayList<>();
 
-	        try (Connection connection = DBConnection.getConnection();
-	             PreparedStatement pstmt = connection.prepareStatement(GET_ADDRESSES_BY_USER_QUERY)) {
+	    try (Connection connection = DBConnection.getConnection();
+	         PreparedStatement pstmt =
+	             connection.prepareStatement(GET_ADDRESSES_BY_USER_QUERY)) {
 
-	            pstmt.setInt(1, userId);
-	            ResultSet rs = pstmt.executeQuery();
+	        pstmt.setInt(1, userId);   // ✅ now matches query
+	        ResultSet rs = pstmt.executeQuery();
 
-	            while (rs.next()) {
-	                addressList.add(extractAddress(rs));
-	            }
-
-	        } catch (SQLException e) {
-	            System.err.println("❌ Error fetching addresses: " + e.getMessage());
-	            e.printStackTrace();
+	        while (rs.next()) {
+	            addressList.add(extractAddress(rs));
 	        }
 
-	        return addressList;
+	    } catch (SQLException e) {
+	        System.err.println("❌ Error fetching addresses: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+
+	    return addressList;
 	}
+
 
 	 // -------------------------------------------------------------------------
     // ✅ Update address
@@ -134,11 +137,13 @@ public class AddressDAOImpl implements AddressDAO{
 	 // -------------------------------------------------------------------------
     // ✅ Delete address
 	@Override
-	public void deleteAddress(int addressId) {
+	public void deleteAddress(int addressId, int userId) {
 		try (Connection connection = DBConnection.getConnection();
 	             PreparedStatement pstmt = connection.prepareStatement(DELETE_ADDRESS_QUERY)) {
 
-	            pstmt.setInt(1, addressId);
+			pstmt.setInt(1, addressId);
+			pstmt.setInt(2, userId);
+
 	            int rowsDeleted = pstmt.executeUpdate();
 
 	            if (rowsDeleted > 0) {

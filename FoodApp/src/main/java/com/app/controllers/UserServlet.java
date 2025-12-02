@@ -59,7 +59,7 @@ public class UserServlet extends HttpServlet {
                 break;
 
             case "profile":           // Show user profile
-                showProfile(request, response);
+            	forward(request, response, "/jsp/customer/profile.jsp");
                 break;
 
             default:           // Unknown action → go to login page
@@ -115,6 +115,9 @@ public class UserServlet extends HttpServlet {
         String plainPassword = req.getParameter("password");
 
        
+        username = username.trim();
+        email = email != null ? email.trim() : null;
+        
         
      // NEW: role taken from form
         String role = req.getParameter("role");
@@ -127,9 +130,11 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
+       
+
         // Check if username exists
         if (userDao.getUserByUsername(username) != null) {
-            req.setAttribute("error", "Username already exists.");
+            req.setAttribute("error", "Registration failed. Please try a different username.");
             forward(req, resp, "/jsp/register.jsp");
             return;
         }

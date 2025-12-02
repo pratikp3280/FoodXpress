@@ -8,8 +8,8 @@ public interface AddressDAO {
 	//To Add a new address for a user
     void addAddress(Address address);
     
-    // To Retrieve a single address by ID
-    Address getAddressById(int addressId);
+    // To Retrieve a single address by ID 
+    Address getAddressById(int addressId, int userId);
     
     // Retrieve all addresses for a specific user
     List<Address> getAddressesByUserId(int userId);
@@ -18,7 +18,7 @@ public interface AddressDAO {
     void updateAddress(Address address);
     
     // Delete an address by ID
-    void deleteAddress(int addressId);
+    void deleteAddress(int addressId, int userId);
     
 //    // To get the Default address of user
 //    Address getDefaultAddress(int userId);

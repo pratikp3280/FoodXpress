@@ -42,10 +42,15 @@ public class AuthFilter implements Filter {
 
             // shared JSP fragments
             path.startsWith("/jsp/shared/") ||
+            
+           
+            
+            path.endsWith(".jspf") || 
 
             // ✅ PUBLIC AUTH PAGES (VERY IMPORTANT)
             path.equals("/jsp/login.jsp") ||
-            path.equals("/jsp/register.jsp")
+            path.equals("/jsp/register.jsp") 
+            
         ) {
             chain.doFilter(request, response);
             return;

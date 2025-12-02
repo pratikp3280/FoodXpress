@@ -1,177 +1,139 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Addresses</title>
-    <style>
+<c:set var="pageTitle" value="Manage Addresses"/>
 
-        body {
-            background: #f6f6f6;
-            font-family: Arial, sans-serif;
-        }
+<%@ include file="../shared/head.jspf" %>
+<%@ include file="../shared/header.jspf" %>
 
-        .container {
-            width: 85%;
-            margin: 30px auto;
-        }
+<main class="main-content">
+    <div class="container grid-2">
 
-        h2 {
-            color: #333;
-        }
+        <!-- ============================= -->
+        <!-- LEFT : SAVED ADDRESSES -->
+        <!-- ============================= -->
+        <div class="card">
+            <h2 class="page-title mb-3">📍 Saved Addresses</h2>
 
-        .address-card {
-            background: white;
-            padding: 15px;
-            margin-bottom: 18px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
+            <c:if test="${empty addresses}">
+                <p style="color: var(--medium-text);">
+                    You have not added any address yet.
+                </p>
+            </c:if>
 
-        .btn {
-            padding: 8px 14px;
-            border-radius: 4px;
-            color: white;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 10px;
-        }
+            <c:forEach var="addr" items="${addresses}" varStatus="status">
+                <div class="card mb-3" style="background:#fafafa">
 
-        .btn-edit {
-            background: #0077cc;
-        }
+                    <strong>
+                        <c:if test="${status.first}">
+                            ✅ Default Address
+                        </c:if>
+                        <c:if test="${!status.first}">
+                            Address ${status.index + 1}
+                        </c:if>
+                    </strong>
 
-        .btn-delete {
-            background: #cc0000;
-        }
+                    <p class="mt-2" style="line-height:1.5">
+                        ${addr.street},<br>
+                        ${addr.city}, ${addr.state} - ${addr.zip}<br>
+                        <c:if test="${not empty addr.landmark}">
+                            Landmark: ${addr.landmark}
+                        </c:if>
+                    </p>
 
-        .btn-save {
-            background: #28a745;
-            border: none;
-            cursor: pointer;
-        }
+                    <div class="mt-2">
+                        <!-- EDIT -->
+                        <a class="btn btn--secondary btn-sm"
+                           href="${pageContext.request.contextPath}/customer/addresses?action=edit&id=${addr.addressId}">
+                            ✏ Edit
+                        </a>
 
-        .form-card {
-            background: #ffffff;
-            padding: 20px;
-            margin-top: 25px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-        }
+                        <!-- DELETE -->
+                        <form action="${pageContext.request.contextPath}/customer/addresses"
+                              method="post"
+                              style="display:inline"
+                              onsubmit="return confirm('Delete this address?');">
 
-        input[type="text"] {
-            width: 98%;
-            padding: 8px;
-            margin-bottom: 12px;
-            border-radius: 4px;
-            border: 1px solid #aaa;
-        }
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="id" value="${addr.addressId}">
 
-    </style>
-</head>
-<body>
+                            <button class="btn btn--danger btn-sm">
+                                🗑 Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </c:forEach>
+        </div>
 
-<div class="container">
+        <!-- ============================= -->
+        <!-- RIGHT : ADD / EDIT ADDRESS -->
+        <!-- ============================= -->
+        <div class="card">
+            <h2 class="page-title mb-3">
+                <c:choose>
+                    <c:when test="${not empty editAddress}">
+                        ✏ Update Address
+                    </c:when>
+                    <c:otherwise>
+                        ➕ Add New Address
+                    </c:otherwise>
+                </c:choose>
+            </h2>
 
-    <h2>My Saved Addresses</h2>
+            <form method="post"
+                  action="${pageContext.request.contextPath}/customer/addresses">
 
-    <!-- If no addresses -->
-    <c:if test="${empty addresses}">
-        <p>No addresses added yet.</p>
-    </c:if>
+                <input type="hidden" name="action"
+                       value="${not empty editAddress ? 'update' : 'add'}"/>
 
-    <!-- Address List -->
-    <c:forEach var="addr" items="${addresses}">
-        <div class="address-card">
-            <strong>${addr.street}</strong><br>
-            ${addr.city}, ${addr.state} - ${addr.zip} <br>
-            Landmark: ${addr.landmark} <br>
+                <c:if test="${not empty editAddress}">
+                    <input type="hidden" name="id"
+                           value="${editAddress.addressId}"/>
+                </c:if>
 
-            <a class="btn btn-edit" href="addresses?action=edit&addressId=${addr.addressId}">
-                Edit
-            </a>
+                <label class="form-label">Street</label>
+                <input class="form-control" name="street" required
+                       value="${editAddress.street}"/>
 
-            <form action="addresses" method="post" style="display:inline;">
-                <input type="hidden" name="action" value="delete">
-                <input type="hidden" name="addressId" value="${addr.addressId}">
-                <button type="submit" class="btn btn-delete"
-                        onclick="return confirm('Delete this address?');">
-                    Delete
+                <label class="form-label">City</label>
+                <input class="form-control" name="city" required
+                       value="${editAddress.city}"/>
+
+                <label class="form-label">State</label>
+                <input class="form-control" name="state" required
+                       value="${editAddress.state}"/>
+
+                <label class="form-label">ZIP Code</label>
+                <input class="form-control" name="zip" required
+                       value="${editAddress.zip}"/>
+
+                <label class="form-label">Landmark</label>
+                <input class="form-control" name="landmark"
+                       value="${editAddress.landmark}"/>
+
+                <button class="btn btn--primary mt-3">
+                    <c:choose>
+                        <c:when test="${not empty editAddress}">
+                            Update Address
+                        </c:when>
+                        <c:otherwise>
+                            Add Address
+                        </c:otherwise>
+                    </c:choose>
                 </button>
+
+                <c:if test="${not empty editAddress}">
+                    <a href="${pageContext.request.contextPath}/customer/addresses"
+                       class="btn btn--secondary mt-3"
+                       style="margin-left:10px">
+                        Cancel
+                    </a>
+                </c:if>
             </form>
         </div>
-    </c:forEach>
-
-
-    <!-- ADD / EDIT FORM -->
-    <div class="form-card">
-
-        <c:choose>
-
-            <!-- Edit Form -->
-            <c:when test="${not empty editAddress}">
-                <h3>Edit Address</h3>
-
-                <form action="addresses" method="post">
-
-                    <input type="hidden" name="action" value="update"/>
-                    <input type="hidden" name="addressId" value="${editAddress.addressId}"/>
-
-                    <label>Street:</label><br>
-                    <input type="text" name="street" value="${editAddress.street}" required>
-
-                    <label>City:</label><br>
-                    <input type="text" name="city" value="${editAddress.city}" required>
-
-                    <label>State:</label><br>
-                    <input type="text" name="state" value="${editAddress.state}" required>
-
-                    <label>ZIP:</label><br>
-                    <input type="text" name="zip" value="${editAddress.zip}" required>
-
-                    <label>Landmark:</label><br>
-                    <input type="text" name="landmark" value="${editAddress.landmark}">
-
-                    <button type="submit" class="btn btn-save">Save Changes</button>
-
-                </form>
-
-            </c:when>
-
-            <!-- Add Form -->
-            <c:otherwise>
-                <h3>Add New Address</h3>
-
-                <form action="addresses" method="post">
-
-                    <input type="hidden" name="action" value="add"/>
-
-                    <label>Street:</label><br>
-                    <input type="text" name="street" required>
-
-                    <label>City:</label><br>
-                    <input type="text" name="city" required>
-
-                    <label>State:</label><br>
-                    <input type="text" name="state" required>
-
-                    <label>ZIP:</label><br>
-                    <input type="text" name="zip" required>
-
-                    <label>Landmark:</label><br>
-                    <input type="text" name="landmark">
-
-                    <button type="submit" class="btn btn-save">Add Address</button>
-
-                </form>
-            </c:otherwise>
-
-        </c:choose>
 
     </div>
+</main>
 
-</div>
-
-</body>
-</html>
+<%@ include file="../shared/footer.jspf" %>

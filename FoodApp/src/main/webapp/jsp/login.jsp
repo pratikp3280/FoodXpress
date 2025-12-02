@@ -59,7 +59,7 @@
                                required />
                     </div>
 
-                    <div class="form-group">
+   <div class="form-group">
     <label class="form-label" for="password">Password</label>
 
     <div class="password-wrapper">
@@ -74,6 +74,7 @@
         <span class="toggle-password" onclick="togglePassword()">👁️</span>
     </div>
 </div>
+
 
                     <button type="submit" class="btn btn--primary" style="width:100%;">
                         Login
