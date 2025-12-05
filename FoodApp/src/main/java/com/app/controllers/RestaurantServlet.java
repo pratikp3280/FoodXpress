@@ -2,12 +2,19 @@ package com.app.controllers;
 
 import java.io.IOException;
 import java.util.List;
-import javax.servlet.*;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.app.dao.MenuItemDAO;
 import com.app.dao.RestaurantDAO;
+import com.app.dao_implementation.MenuItemDAOImpl;
 import com.app.dao_implementation.RestaurantDAOImpl;
+import com.app.models.MenuItem;
 import com.app.models.Restaurant;
 
 /*
@@ -97,28 +104,28 @@ public class RestaurantServlet extends HttpServlet {
 
         String idParam = req.getParameter("id");
 
-        // If ID missing → redirect back to list
-        if (idParam == null || idParam.isEmpty()) {
+        if (idParam == null) {
             resp.sendRedirect(req.getContextPath() + "/restaurant?action=list");
             return;
         }
 
         int restaurantId = Integer.parseInt(idParam);
 
-        // Fetch from DB
+        // 1️⃣ Restaurant
         Restaurant restaurant = restaurantDAO.getRestaurantById(restaurantId);
-
-        // If not found → show error JSP
-        if (restaurant == null) {
-            req.setAttribute("errorMessage", "Restaurant not found!");
-            forward(req, resp, "/jsp/error.jsp");
+        if (restaurant == null || !restaurant.isActive()) {
+            resp.sendRedirect(req.getContextPath() + "/restaurant?action=list");
             return;
         }
 
-        // Attach info for JSP
-        req.setAttribute("restaurant", restaurant);
+        // 2️⃣ Menu
+        MenuItemDAO menuItemDAO = new MenuItemDAOImpl();
+        List<MenuItem> menuItems = menuItemDAO.getMenuItemsByRestaurantId(restaurantId);
 
-        // Forward to details page
+        // 3️⃣ Attach
+        req.setAttribute("restaurant", restaurant);
+        req.setAttribute("menuItems", menuItems);
+
         forward(req, resp, "/jsp/customer/restaurantDetails.jsp");
     }
 

@@ -11,7 +11,11 @@ This file contains:
 ✔ Global fonts
 ✔ All defaults
 
+--bg-light: #f8f9fa;
+ --card-bg: #ffffff;
  */
+ 
+ 
  
  /* assets/css/base.css */
 :root {
@@ -25,8 +29,8 @@ This file contains:
   --dark-text: #333333;
   --medium-text: #666666;
   --light-text: #888888;
-  --bg-light: #f8f9fa;
-  --card-bg: #ffffff;
+  --bg-light: rgb(237, 232, 222);
+  --card-bg: rgb(240, 242, 242);
   --border-light: #e0e0e0;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);

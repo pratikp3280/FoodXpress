@@ -9,7 +9,7 @@
 
     <div class="navbar-links">
 
-        <a href="${pageContext.request.contextPath}/restaurantList">Restaurants</a>
+       <a href="${pageContext.request.contextPath}/restaurant?action=list">Restaurants</a>
         <a href="${pageContext.request.contextPath}/orders">My Orders</a>
         <a class="nav-btn" href="${pageContext.request.contextPath}/cart">Cart</a>
 

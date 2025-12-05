@@ -15,7 +15,7 @@
 
     <div class="grid-3">
 
-      <a class="card" href="${pageContext.request.contextPath}/restaurantList">
+      <a class="card" href="${pageContext.request.contextPath}/restaurant?action=list">
         <h3>🍽 Browse Restaurants</h3>
         <p class="card__text">Discover restaurants near you</p>
       </a>
