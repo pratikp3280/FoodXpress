@@ -4,45 +4,69 @@
 
     <!-- LOGO → HOME -->
     <a class="logo" href="${pageContext.request.contextPath}/">
-        FoodApp
+        <img
+            src="${pageContext.request.contextPath}/assets/images/app_logo.png"
+            alt="Food Express"
+            class="app-logo"
+            onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerText='FoodApp';"
+        />
     </a>
 
     <div class="navbar-links">
 
-       <a href="${pageContext.request.contextPath}/restaurant?action=list">Restaurants</a>
-        <a href="${pageContext.request.contextPath}/orders">My Orders</a>
-        <a class="nav-btn" href="${pageContext.request.contextPath}/cart">Cart</a>
+        <a href="${pageContext.request.contextPath}/restaurant?action=list">
+            Restaurants
+        </a>
+
+        <a href="${pageContext.request.contextPath}/orders">
+            My Orders
+        </a>
+
+        <!-- CART ICON -->
+        <a class="nav-cart-btn"
+           href="${pageContext.request.contextPath}/cart"
+           title="View Cart">
+            <img
+                src="${pageContext.request.contextPath}/assets/images/cart_icon.png"
+                alt="Cart"
+                class="cart-icon"
+                onerror="this.style.display='none'; this.parentElement.innerText='Cart';"
+            />
+        </a>
 
         <c:choose>
-          <c:when test="${not empty sessionScope.loggedUser}">
-    
-    <a href="${pageContext.request.contextPath}/jsp/customer/home.jsp">
-        Home
-    </a>
 
-    <a href="${pageContext.request.contextPath}/jsp/customer/profile.jsp">
-        My Profile
-    </a>
+            <c:when test="${not empty sessionScope.loggedUser}">
 
-    <a class="nav-btn"
-       href="${pageContext.request.contextPath}/user?action=logout">
-       Logout
-    </a>
+                <a href="${pageContext.request.contextPath}/jsp/customer/home.jsp">
+                    Home
+                </a>
 
-</c:when>
+                <a href="${pageContext.request.contextPath}/jsp/customer/profile.jsp">
+                    My Profile
+                </a>
 
+                <a class="nav-btn"
+                   href="${pageContext.request.contextPath}/user?action=logout">
+                    Logout
+                </a>
+
+            </c:when>
 
             <c:otherwise>
+
                 <a class="nav-btn"
                    href="${pageContext.request.contextPath}/user?action=login">
-                   Login
+                    Login
                 </a>
 
                 <a class="nav-btn"
                    href="${pageContext.request.contextPath}/user?action=register">
-                   Register
+                    Register
                 </a>
+
             </c:otherwise>
+
         </c:choose>
 
     </div>

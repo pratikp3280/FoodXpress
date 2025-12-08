@@ -7,10 +7,6 @@ import javax.servlet.http.*;
 
 import com.app.models.User;
 
-/**
- * AuthFilter
- * Enforces authentication + role-based access control (RBAC)
- */
 @WebFilter("/*")
 public class AuthFilter implements Filter {
 
@@ -23,69 +19,69 @@ public class AuthFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
-        String context = request.getContextPath();
+        String contextPath = request.getContextPath();
         String uri = request.getRequestURI();
-        String path = uri.substring(context.length());
+        String path = uri.substring(contextPath.length());
 
-        // ===============================
-        // ✅ PUBLIC RESOURCES
-        // ===============================
+        /* ===============================
+           ✅ PUBLIC / WHITELISTED PATHS
+        =============================== */
         if (
-            path.equals("/") ||
-            path.equals("/index.jsp") ||
+                path.equals("/") ||
+                path.equals("/index.jsp") ||
 
-            // static resources
-            path.startsWith("/assets/") ||
+                // static
+                path.startsWith("/assets/") ||
 
-            // servlet endpoints
-            path.startsWith("/user") ||
+                // auth servlet
+                path.startsWith("/user") ||
 
-            // shared JSP fragments
-            path.startsWith("/jsp/shared/") ||
-            
-           
-            
-            path.endsWith(".jspf") || 
+                // public JSP fragments
+                path.startsWith("/jsp/shared/") ||
 
-            // ✅ PUBLIC AUTH PAGES (VERY IMPORTANT)
-            path.equals("/jsp/login.jsp") ||
-            path.equals("/jsp/register.jsp") 
-            
+                // index / login / register pages
+                path.startsWith("/jsp/public/") ||
+
+                // allow checkout servlet (IMPORTANT)
+                path.startsWith("/checkout") ||
+
+                // allow cart servlet
+                path.startsWith("/cart") ||
+
+                path.endsWith(".jspf")
         ) {
             chain.doFilter(request, response);
             return;
         }
 
-        // ===============================
-        // ✅ CHECK AUTHENTICATION
-        // ===============================
+        /* ===============================
+           ✅ AUTH CHECK
+        =============================== */
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("loggedUser") == null) {
-            response.sendRedirect(context + "/user?action=login");
+        User user = (session == null) ? null
+                : (User) session.getAttribute(SESSION_USER);
+
+        if (user == null) {
+            response.sendRedirect(contextPath + "/user?action=login");
             return;
         }
 
-        String role = ((com.app.models.User) session.getAttribute("loggedUser")).getRole();
+        String role = user.getRole();
 
-        // ===============================
-        // ✅ ROLE BASED ACCESS
-        // ===============================
+        /* ===============================
+           ✅ ROLE-BASED JSP ACCESS
+        =============================== */
         if (path.startsWith("/jsp/admin/") && !"admin".equalsIgnoreCase(role)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
-        if (path.startsWith("/jsp/customer/") && !"customer".equalsIgnoreCase(role)) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
-
-        if (path.startsWith("/jsp/delivery/") && !"delivery".equalsIgnoreCase(role)) {
+        if (path.startsWith("/jsp/customer/")
+                && !"customer".equalsIgnoreCase(role)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
         chain.doFilter(request, response);
     }
-
 }

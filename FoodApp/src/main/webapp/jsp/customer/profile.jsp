@@ -55,13 +55,13 @@
 
       <!-- View Orders -->
       <a class="card action-card"
-         href="${pageContext.request.contextPath}/orders">
+         href="${pageContext.request.contextPath}/customer/orders">
         📦 View Orders
       </a>
 
       <!-- Go to Cart -->
       <a class="card action-card"
-         href="${pageContext.request.contextPath}/cart">
+         href="${pageContext.request.contextPath}/customer/cart.jsp">
         🛒 Go to Cart
       </a>
 

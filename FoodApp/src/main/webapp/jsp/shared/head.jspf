@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- ===== APP FAVICON ===== -->
+<link rel="icon"
+      type="image/png"
+      href="${pageContext.request.contextPath}/assets/images/app_logo.png">
+
 <!-- ===== DYNAMIC PAGE TITLE ===== -->
 <title>
     <c:choose>

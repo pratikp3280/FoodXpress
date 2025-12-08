@@ -114,7 +114,7 @@
 /* ------------------------------ */
 
 .navbar {
-    background: #ffffff;
+    background: rgb(255, 255, 255);
     padding: 12px 24px;
     display: flex;
     justify-content: space-between;
@@ -335,6 +335,34 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
+.cart-item img {
+    width: 90px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 2px;
+    background: #f3f3f3;
+}
+
+
+/* App logo */
+.app-logo {
+    height: 80px;
+    width: auto;
+    display: block;
+    position: relative;
+}
+
+/* Cart icon */
+.nav-cart-btn {
+    display: flex;
+    align-items: center;
+}
+
+.cart-icon {
+    height: 26px;
+    width: auto;
+    cursor: pointer;
+}
 
 
 

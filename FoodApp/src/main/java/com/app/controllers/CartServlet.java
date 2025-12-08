@@ -14,7 +14,7 @@ import com.app.dao_implementation.MenuItemDAOImpl;
 import com.app.models.Cart;
 import com.app.models.CartItem;
 import com.app.models.MenuItem;
-
+import com.app.models.User; 
 
 @WebServlet("/cart")
 public class CartServlet extends HttpServlet {
@@ -71,17 +71,18 @@ public class CartServlet extends HttpServlet {
     }
 
     // =========================================================
-    // VIEW CART
+    // VIEW CART / show Cart
     // =========================================================
     private void showCart(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        Integer userId = (Integer) req.getSession().getAttribute("userId");
-
-        if (userId == null) {
+        HttpSession session = req.getSession(false);
+        User loggedUser = session != null ? (User) session.getAttribute("loggedUser") : null;
+        if (loggedUser == null) {
             resp.sendRedirect("login.jsp");
             return;
         }
+        int userId = loggedUser.getUserId();
 
         // Ensure cart exists
         Cart cart = cartDAO.getCartByUserId(userId);
@@ -93,8 +94,7 @@ public class CartServlet extends HttpServlet {
         List<CartItem> cartItems = cartDAO.getCartItems(cart.getCartId());
 
         // Fetch MenuItem details for display (name, price, image)
-        java.util.Map<Integer, MenuItem> menuMap =
-                new java.util.HashMap<>();
+        java.util.Map<Integer, MenuItem> menuMap = new java.util.HashMap<>();
 
         for (CartItem ci : cartItems) {
             MenuItem item = menuItemDAO.getMenuItemById(ci.getMenuItemId());
@@ -108,8 +108,9 @@ public class CartServlet extends HttpServlet {
         req.setAttribute("cartTotal", total);
 
         RequestDispatcher rd =
-                req.getRequestDispatcher("/WEB-INF/jsp/customer/cart.jsp");
-        rd.forward(req, resp);
+        	    req.getRequestDispatcher("/jsp/customer/cart.jsp");
+        	rd.forward(req, resp);
+
     }
 
     // =========================================================
@@ -118,21 +119,62 @@ public class CartServlet extends HttpServlet {
     private void addItem(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
 
-        Integer userId = (Integer) req.getSession().getAttribute("userId");
-        if (userId == null) {
-            resp.sendRedirect("login.jsp");
-            return;
+        HttpSession session = req.getSession(false);
+        User loggedUser = session != null ? (User) session.getAttribute("loggedUser") : null;
+        if (loggedUser == null) {
+            // If AJAX, return 401 JSON. If normal, redirect.
+            if (isAjax(req)) {
+                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                resp.setContentType("application/json");
+                resp.getWriter().write("{\"success\":false, \"error\":\"not_authenticated\"}");
+                return;
+            } else {
+                resp.sendRedirect("login.jsp");
+                return;
+            }
         }
+        int userId = loggedUser.getUserId();
 
-        int menuItemId = Integer.parseInt(req.getParameter("menuItemId"));
-        int quantity = Integer.parseInt(req.getParameter("quantity"));
+        int menuItemId;
+        int quantity;
+        try {
+            menuItemId = Integer.parseInt(req.getParameter("menuItemId"));
+            quantity = Integer.parseInt(req.getParameter("quantity"));
+        } catch (NumberFormatException e) {
+            if (isAjax(req)) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.setContentType("application/json");
+                resp.getWriter().write("{\"success\":false, \"error\":\"invalid_parameters\"}");
+                return;
+            } else {
+                resp.sendRedirect("cart?action=view");
+                return;
+            }
+        }
 
         // Ensure cart exists
         Cart cart = cartDAO.getCartByUserId(userId);
         if (cart == null) cartDAO.createCart(userId);
 
+        // Perform DB insert/update
         cartDAO.addItemToCart(userId, menuItemId, quantity);
 
+        // If AJAX: return JSON success and total item count
+        if (isAjax(req)) {
+            cart = cartDAO.getCartByUserId(userId);
+            int cartCount = 0;
+            if (cart != null) {
+                for (CartItem ci : cartDAO.getCartItems(cart.getCartId())) {
+                    cartCount += ci.getQuantity();
+                }
+            }
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write("{\"success\":true,\"cartCount\":" + cartCount + "}");
+            return;
+        }
+
+        // Non-AJAX: redirect to view cart
         resp.sendRedirect("cart?action=view");
     }
 
@@ -142,11 +184,13 @@ public class CartServlet extends HttpServlet {
     private void updateItem(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
 
-        Integer userId = (Integer) req.getSession().getAttribute("userId");
-        if (userId == null) {
+        HttpSession session = req.getSession(false);
+        User loggedUser = session != null ? (User) session.getAttribute("loggedUser") : null;
+        if (loggedUser == null) {
             resp.sendRedirect("login.jsp");
             return;
         }
+        int userId = loggedUser.getUserId();
 
         int menuItemId = Integer.parseInt(req.getParameter("menuItemId"));
         int quantity = Integer.parseInt(req.getParameter("quantity"));
@@ -166,11 +210,13 @@ public class CartServlet extends HttpServlet {
     private void removeItem(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
 
-        Integer userId = (Integer) req.getSession().getAttribute("userId");
-        if (userId == null) {
+        HttpSession session = req.getSession(false);
+        User loggedUser = session != null ? (User) session.getAttribute("loggedUser") : null;
+        if (loggedUser == null) {
             resp.sendRedirect("login.jsp");
             return;
         }
+        int userId = loggedUser.getUserId();
 
         int menuItemId = Integer.parseInt(req.getParameter("menuItemId"));
 
@@ -189,11 +235,13 @@ public class CartServlet extends HttpServlet {
     private void clearCart(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
 
-        Integer userId = (Integer) req.getSession().getAttribute("userId");
-        if (userId == null) {
+        HttpSession session = req.getSession(false);
+        User loggedUser = session != null ? (User) session.getAttribute("loggedUser") : null;
+        if (loggedUser == null) {
             resp.sendRedirect("login.jsp");
             return;
         }
+        int userId = loggedUser.getUserId();
 
         Cart cart = cartDAO.getCartByUserId(userId);
 
@@ -203,51 +251,12 @@ public class CartServlet extends HttpServlet {
 
         resp.sendRedirect("cart?action=view");
     }
+
+    // =========================================================
+    // Utility: detect AJAX requests
+    // =========================================================
+    private boolean isAjax(HttpServletRequest req) {
+        String xhr = req.getHeader("X-Requested-With");
+        return xhr != null && "XMLHttpRequest".equalsIgnoreCase(xhr);
+    }
 }
-
-/*
-===========================================================
- CartServlet – JSP Mappings (Customer Cart System)
-===========================================================
-
-URL MAPPINGS:
-----------------------------------------------
-GET  /cart?action=view
-    → /WEB-INF/jsp/customer/cart.jsp
-
-POST /cart?action=add&menuItemId={id}
-    → Adds item → redirects to /cart?action=view
-
-POST /cart?action=update&menuItemId={id}&quantity={q}
-    → Updates item quantity → redirects to cart
-
-GET  /cart?action=remove&menuItemId={id}
-    → Removes item → redirects to cart
-
-GET  /cart?action=clear
-    → Clears cart → redirects to cart
-
-
-REQUIRED JSP FILES:
-----------------------------------------------
-📁 /WEB-INF/jsp/customer/cart.jsp
-
-
-DATA PASSED TO JSP:
-----------------------------------------------
-cartItems  → List<CartItem>
-menuItems  → Map<menuItemId, MenuItem>
-cartTotal  → double total price
-
-
-IMPORTANT NOTES:
-----------------------------------------------
-✔ One active cart per user (per DB design)
-✔ If cart does not exist → automatically created
-✔ Uses CartDAO + MenuItemDAO
-✔ Uses DB exact fields:
-      carts.cart_id, user_id
-      cart_items.cart_item_id, menu_item_id, quantity
-✔ Requires user session attribute: session.getAttribute("userId")
-===========================================================
-*/

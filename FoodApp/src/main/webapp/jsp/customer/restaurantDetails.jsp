@@ -188,38 +188,44 @@
 <script>
     let cartItemCount = 0;
 
-    function changeQty(id, delta) {
-        const input = document.getElementById('qty-' + id);
-        let qty = parseInt(input.value) + delta;
-        if (qty < 1) qty = 1;
-        input.value = qty;
-    }
-
     function addToCart(menuItemId) {
         const qty = document.getElementById('qty-' + menuItemId).value;
 
+        const body =
+            'action=add' +
+            '&menuItemId=' + encodeURIComponent(menuItemId) +
+            '&quantity=' + encodeURIComponent(qty);
+
         fetch('${pageContext.request.contextPath}/cart', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `menuItemId=${menuItemId}&quantity=${qty}`
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: body
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+        .then(res => {
+            if (!res.ok) throw new Error(res.status);
+            return res.json();
+        })
+        .then(data => {
+            if (data.success) {
+                cartItemCount = data.cartCount;
+                document.getElementById('cartCount').innerText = cartItemCount;
+                document.getElementById('cartSummary').classList.remove('hidden');
+            } else {
+                alert('Unable to add item to cart.');
             }
-            return response.text();
-        })
-        .then(() => {
-            cartItemCount += parseInt(qty);
-            document.getElementById('cartCount').innerText = cartItemCount;
-            document.getElementById('cartSummary').classList.remove('hidden');
         })
         .catch(err => {
-            console.error('Add to cart failed', err);
+            console.error(err);
             alert('Unable to add item to cart. Try again.');
         });
     }
 </script>
+
+
 
 </body>
 </html>
