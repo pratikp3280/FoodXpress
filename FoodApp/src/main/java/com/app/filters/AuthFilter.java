@@ -30,24 +30,14 @@ public class AuthFilter implements Filter {
                 path.equals("/") ||
                 path.equals("/index.jsp") ||
 
-                // static
+                // static resources
                 path.startsWith("/assets/") ||
 
-                // auth servlet
+                // login/register servlet
                 path.startsWith("/user") ||
 
-                // public JSP fragments
+                // shared JSP fragments
                 path.startsWith("/jsp/shared/") ||
-
-                // index / login / register pages
-                path.startsWith("/jsp/public/") ||
-
-                // allow checkout servlet (IMPORTANT)
-                path.startsWith("/checkout") ||
-
-                // allow cart servlet
-                path.startsWith("/cart") ||
-
                 path.endsWith(".jspf")
         ) {
             chain.doFilter(request, response);
@@ -69,9 +59,10 @@ public class AuthFilter implements Filter {
         String role = user.getRole();
 
         /* ===============================
-           ✅ ROLE-BASED JSP ACCESS
+           ✅ ROLE BASED ACCESS
         =============================== */
-        if (path.startsWith("/jsp/admin/") && !"admin".equalsIgnoreCase(role)) {
+        if (path.startsWith("/jsp/admin/")
+                && !"admin".equalsIgnoreCase(role)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
@@ -82,6 +73,9 @@ public class AuthFilter implements Filter {
             return;
         }
 
+        /* ===============================
+           ✅ ALL CHECKS PASSED
+        =============================== */
         chain.doFilter(request, response);
     }
 }

@@ -94,6 +94,12 @@ img {
   height: auto;
   display: block;
 }
+
+.muted {
+    opacity: 0.9;
+    cursor: not-allowed;
+}
+
  
  
  

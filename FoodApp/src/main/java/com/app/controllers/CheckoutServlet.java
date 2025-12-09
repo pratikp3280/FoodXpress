@@ -19,88 +19,128 @@ import com.app.models.CartItem;
 import com.app.models.MenuItem;
 import com.app.models.Order;
 import com.app.models.OrderItem;
+import com.app.models.User;
 
 @WebServlet("/checkout")
 public class CheckoutServlet extends HttpServlet {
 
-    private CartDAO cartDAO = new CartDAOImpl();
-    private MenuItemDAO menuItemDAO = new MenuItemDAOImpl();
-    private OrderDAO orderDAO = new OrderDAOImpl();
+    private final CartDAO cartDAO = new CartDAOImpl();
+    private final MenuItemDAO menuItemDAO = new MenuItemDAOImpl();
+    private final OrderDAO orderDAO = new OrderDAOImpl();
 
+    /* ==========================================================
+       GET  : SHOW CHECKOUT PAGE
+       ========================================================== */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        Integer userId = (Integer) req.getSession().getAttribute("userId");
+        HttpSession session = req.getSession(false);
 
-        if (userId == null) {
-            resp.sendRedirect("login.jsp");
+        // ✅ SINGLE SOURCE OF AUTH TRUTH
+        User user = (session == null)
+                ? null
+                : (User) session.getAttribute("loggedUser");
+
+        // ✅ NOT LOGGED IN
+        if (user == null) {
+            resp.sendRedirect(req.getContextPath() + "/user?action=login");
             return;
         }
 
+        int userId = user.getUserId();
+
         Cart cart = cartDAO.getCartByUserId(userId);
+
+        // ✅ CART NOT FOUND / EMPTY
         if (cart == null) {
-            resp.sendRedirect("cart?action=view");
+            resp.sendRedirect(req.getContextPath() + "/cart?action=view");
             return;
         }
 
         List<CartItem> cartItems = cartDAO.getCartItems(cart.getCartId());
-        double total = cartDAO.getCartTotal(cart.getCartId());
 
-        if (cartItems.isEmpty()) {
-            resp.sendRedirect("cart?action=view");
+        if (cartItems == null || cartItems.isEmpty()) {
+            resp.sendRedirect(req.getContextPath() + "/cart?action=view");
             return;
         }
 
-        // Attach cart preview for checkout page
-        req.setAttribute("cartItems", cartItems);
-        req.setAttribute("totalAmount", total);
+        double totalAmount = cartDAO.getCartTotal(cart.getCartId());
 
-        Map<Integer, MenuItem> menuMap = new HashMap<>();
+        // ✅ BUILD MENU ITEM MAP
+        Map<Integer, MenuItem> menuItems = new HashMap<>();
         for (CartItem ci : cartItems) {
-            menuMap.put(ci.getMenuItemId(), menuItemDAO.getMenuItemById(ci.getMenuItemId()));
+            menuItems.put(ci.getMenuItemId(),
+                    menuItemDAO.getMenuItemById(ci.getMenuItemId()));
         }
-        req.setAttribute("menuItems", menuMap);
 
-        // Correct JSP path
-        RequestDispatcher rd = req.getRequestDispatcher("/WEB-INF/jsp/customer/checkout.jsp");
-        rd.forward(req, resp);
+        // ✅ SET ATTRIBUTES
+        req.setAttribute("cartItems", cartItems);
+        req.setAttribute("menuItems", menuItems);
+        req.setAttribute("totalAmount", totalAmount);
+
+        // ✅ FORWARD TO JSP (NO REDIRECT)
+        req.getRequestDispatcher("/jsp/customer/checkout.jsp")
+                .forward(req, resp);
     }
 
+    /* ==========================================================
+       POST : PLACE ORDER
+       ========================================================== */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        Integer userId = (Integer) req.getSession().getAttribute("userId");
+        HttpSession session = req.getSession(false);
 
-        if (userId == null) {
-            resp.sendRedirect("login.jsp");
+        // ✅ SINGLE SOURCE OF AUTH TRUTH
+        User user = (session == null)
+                ? null
+                : (User) session.getAttribute("loggedUser");
+
+        if (user == null) {
+            resp.sendRedirect(req.getContextPath() + "/user?action=login");
             return;
         }
 
+        int userId = user.getUserId();
+
         Cart cart = cartDAO.getCartByUserId(userId);
+
         if (cart == null) {
-            resp.sendRedirect("cart?action=view");
+            resp.sendRedirect(req.getContextPath() + "/cart?action=view");
             return;
         }
 
         List<CartItem> cartItems = cartDAO.getCartItems(cart.getCartId());
-        if (cartItems.isEmpty()) {
-            resp.sendRedirect("cart?action=view");
+
+        if (cartItems == null || cartItems.isEmpty()) {
+            resp.sendRedirect(req.getContextPath() + "/cart?action=view");
             return;
         }
 
-        // ------------ READ CHECKOUT FORM VALUES ------------
+        /* ================= READ CHECKOUT FORM ================= */
+        /* ================= READ CHECKOUT FORM ================= */
         int restaurantId = Integer.parseInt(req.getParameter("restaurantId"));
+
         String paymentMethod = req.getParameter("payment_method");
+        if (paymentMethod == null || paymentMethod.isEmpty()) {
+            paymentMethod = "COD"; // fallback safety
+        }
+
         String deliveryInstructions = req.getParameter("instructions");
 
+        /* ✅ SAFE ADDRESS PARSING */
         String addressIdStr = req.getParameter("addressId");
-        Integer addressId = (addressIdStr == null || addressIdStr.isEmpty()) ? null : Integer.parseInt(addressIdStr);
+        Integer addressId = null;
+        if (addressIdStr != null && !addressIdStr.trim().isEmpty()) {
+            addressId = Integer.parseInt(addressIdStr);
+        }
 
         double totalAmount = cartDAO.getCartTotal(cart.getCartId());
 
-        // ------------ CREATE ORDER OBJECT ------------
+
+        /* ================= CREATE ORDER ================= */
         Order order = new Order();
         order.setUserId(userId);
         order.setRestaurantId(restaurantId);
@@ -111,7 +151,7 @@ public class CheckoutServlet extends HttpServlet {
         order.setPaymentStatus("pending");
         order.setDeliveryInstructions(deliveryInstructions);
 
-        // Convert cart items → order items
+        /* ================= ORDER ITEMS ================= */
         List<OrderItem> orderItems = new ArrayList<>();
         for (CartItem ci : cartItems) {
             MenuItem mi = menuItemDAO.getMenuItemById(ci.getMenuItemId());
@@ -127,15 +167,17 @@ public class CheckoutServlet extends HttpServlet {
         int orderId = orderDAO.placeOrder(order, orderItems);
 
         if (orderId <= 0) {
-            req.setAttribute("errorMessage", "Order could not be placed due to a system error.");
-            req.getRequestDispatcher("/WEB-INF/jsp/customer/checkout.jsp").forward(req, resp);
+            req.setAttribute("errorMessage",
+                    "Order could not be placed due to a system error.");
+            req.getRequestDispatcher("/jsp/customer/checkout.jsp")
+                    .forward(req, resp);
             return;
         }
 
-        // Clear cart now
+        /* ================= CLEANUP & REDIRECT ================= */
         cartDAO.clearCart(cart.getCartId());
 
-        // Redirect to correct JSP
-        resp.sendRedirect("orderSuccess?orderId=" + orderId);
+        resp.sendRedirect(req.getContextPath()
+                + "/orderSuccess?orderId=" + orderId);
     }
 }

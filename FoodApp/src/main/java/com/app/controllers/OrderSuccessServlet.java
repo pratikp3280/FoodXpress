@@ -12,7 +12,7 @@ public class OrderSuccessServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        req.getRequestDispatcher("/WEB-INF/jsp/customer/orderSuccess.jsp")
+        req.getRequestDispatcher("/jsp/customer/orderSuccess.jsp")
            .forward(req, resp);
     }
 }
