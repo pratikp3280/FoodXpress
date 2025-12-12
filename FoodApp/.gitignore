@@ -1,0 +1,17 @@
+# Sensitive files
+src/main/resources/app.properties
+
+# Maven
+target/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
