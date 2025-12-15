@@ -206,7 +206,7 @@ html, body {
 }
 
 .hero-image img {
-    width: 430px;
+    width: 500px;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
 }

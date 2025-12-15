@@ -50,7 +50,7 @@ This file contains:
   --space-8: 3rem;    /* 48px */
 
   /* Typography */
-  --font-family: 'Inter','Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   --font-size-sm: 0.875rem; /* 14px */
   --font-size-base: 1rem;   /* 16px */
   --font-size-lg: 1.125rem; /* 18px */

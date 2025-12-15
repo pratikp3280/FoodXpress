@@ -13,29 +13,27 @@
 <title>
     <c:choose>
         <c:when test="${not empty pageTitle}">
-            ${pageTitle} - FoodApp
+            ${pageTitle} - FoodXpress
         </c:when>
         <c:otherwise>
-            FoodApp
+            FoodXpress
         </c:otherwise>
     </c:choose>
 </title>
 
 <!-- ===== GOOGLE FONTS ===== -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- ===== ICONS ===== -->
+<!-- ===== ICON LIBRARIES (FontAwesome + RemixIcon) ===== -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
 <!-- ===== GLOBAL CSS ===== -->
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/base.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/layout.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/components.css">
 
-<!-- ===== PAGE SPECIFIC CSS (Optional) ===== -->
+<!-- ===== PAGE SPECIFIC CSS ===== -->
 <c:if test="${not empty pageSpecificCSS}">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/${pageSpecificCSS}">
 </c:if>

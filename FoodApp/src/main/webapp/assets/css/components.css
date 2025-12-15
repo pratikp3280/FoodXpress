@@ -109,78 +109,79 @@
 .mt-5 { margin-top: var(--space-5); }
 
 
-/* ------------------------------ */
-/* GLOBAL NAVBAR STYLES           */
-/* ------------------------------ */
+/* =============================== */
+/* HEADER / NAVBAR – DARK THEME    */
+/* =============================== */
 
 .navbar {
-    background: rgb(255, 255, 255);
-    padding: 12px 24px;
+    background: #121212; /* match footer black */
+    padding: 8px 24px;   /* 🔽 height reduced */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #222;
     position: sticky;
     top: 0;
     z-index: 1000;
 }
 
-/* Logo Section */
+
+/* LOGO */
 .navbar .logo {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
-    color: #ff4d4d;
-    text-decoration: none;
+    color: #ff6b00; /* Brand orange */
     letter-spacing: 0.5px;
 }
 
-/* Navigation Links Container */
+/* NAV LINKS CONTAINER */
 .navbar-links {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 26px;
 }
 
-/* Each Nav Link */
+/* NAV LINKS */
 .navbar-links a {
-    text-decoration: none;
-    color: #333;
+    color: #ffffff;
     font-size: 1rem;
-    font-weight: 500;
-    transition: color 0.2s ease;
+    font-weight: 600;
+    transition: color 0.25s ease;
 }
 
+/* HOVER EFFECT */
 .navbar-links a:hover {
-    color: rgb(255, 130, 130);
+    color: #ff6b00;
 }
 
-/* Highlighted buttons (Login / Cart) */
+/* BUTTON STYLE (Login / Register / Cart) */
 .nav-btn {
     padding: 8px 18px;
     border-radius: 25px;
-    border: 1px solid #ff4d4d;
-    color: #ff4d4d;
+    border: 1px solid #ff6b00;
+    color: #ff6b00;
     font-weight: 600;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
 }
 
+/* BUTTON HOVER */
 .nav-btn:hover {
-    background: rgb(255, 130, 130);
-    color: #fff;
+    
+    color: #121212;
+    
 }
 
-/* Mobile Responsive Navbar */
+/* MOBILE RESPONSIVE */
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
-        gap: 10px;
-        padding: 14px;
+        gap: 12px;
     }
 
     .navbar-links {
-        gap: 16px;
         flex-wrap: wrap;
         justify-content: center;
+        gap: 18px;
     }
 }
 
@@ -344,12 +345,11 @@
 }
 
 
-/* App logo */
+/* App Logo Image */
 .app-logo {
-    height: 80px;
+    height: 60px;      /* 🔼 bigger logo */
     width: auto;
-    display: block;
-    position: relative;
+    object-fit: contain;
 }
 
 /* Cart icon */
@@ -372,4 +372,45 @@
     display: inline-block;
 }
 
+
+/* =============================== */
+/* LOGO + BRAND TEXT (NAVBAR)      */
+/* =============================== */
+
+.logo-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* space between logo & text */
+}
+
+
+.brand-text {
+    font-size: 1.4rem;          /* same visual weight as footer */
+    font-weight: 700;
+    color: var(--primary-dark); /* #e46d00 */
+    letter-spacing: 0.5px;
+    line-height: 1;
+    font-style: Tahoma;
+    text-shadow: 0 0 8px rgb(228, 104, 0, 0.4);
+}
+
+/* =============================== */
+/* CART SVG ICON                   */
+/* =============================== */
+
+.cart-link {
+    display: flex;
+    align-items: center;
+}
+
+.cart-icon {
+    height: 32px;      /* real app size */
+    width: auto;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.cart-icon:hover {
+    transform: scale(1.1);
+}
 
