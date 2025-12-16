@@ -99,6 +99,71 @@ Below is a visual walkthrough of **FoodXpress**, showcasing key user flows and c
 - ✅ Clear user feedback for actions and status updates
 
 ---
+## 🛠️ Technology Stack
 
+| Tool / Technology | Badge | Description |
+|-------------------|-------|-------------|
+| **Java (JDK 17)** | ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white) | Core backend language used for business logic, servlets, DAO layers, and application flow |
+| **JSP** | ![JSP](https://img.shields.io/badge/JSP%20(JavaServer%20Pages)-007396?style=for-the-badge&logo=java&logoColor=white) | View layer technology for rendering dynamic web pages |
+| **Servlets** | ![Servlets](https://img.shields.io/badge/Java%20Servlets-3776AB?style=for-the-badge&logo=java&logoColor=white) | Controller layer handling HTTP requests, responses, and routing |
+| **JDBC** | ![JDBC](https://img.shields.io/badge/JDBC-4479A1?style=for-the-badge&logo=java&logoColor=white) | Java API used for database connectivity and SQL execution |
+| **MySQL** | ![MySQL](https://img.shields.io/badge/MySQL-00758F?style=for-the-badge&logo=mysql&logoColor=white) | Relational database for storing users, restaurants, menus, carts, and orders |
+| **HTML5** | ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white) | Markup language for structuring web pages |
+| **CSS3** | ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white) | Styling and layout design for responsive UI |
+| **JavaScript** | ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) | Client-side interactions and UI behavior |
+| **Apache Tomcat 9** | ![Tomcat](https://img.shields.io/badge/Apache%20Tomcat-F8DC75?style=for-the-badge&logo=apachetomcat&logoColor=black) | Servlet container used to deploy and run the application |
+| **Eclipse IDE** | ![Eclipse](https://img.shields.io/badge/Eclipse-2C2255?style=for-the-badge&logo=eclipse-ide&logoColor=white) | Development environment used for building and debugging the project |
+| **Maven** | ![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white) | Build automation and dependency management |
+| **Git** | ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white) | Version control system for source code management |
+| **GitHub** | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white) | Repository hosting and project showcasing platform |
+
+## 🏗️ System Architecture
+
+FoodXpress follows a **clean MVC (Model–View–Controller) architecture**, ensuring **separation of concerns**, scalability, and maintainability.
+
+---
+
+### 🔄 MVC Architecture Flow
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "background": "#FAF7F2",
+    "primaryColor": "#FFF3E0",
+    "primaryTextColor": "#2E2E2E",
+    "primaryBorderColor": "#D7CCC8",
+    "lineColor": "#8D6E63",
+    "secondaryColor": "#E3F2FD",
+    "tertiaryColor": "#E8F5E9",
+    "fontSize": "14px"
+  }
+}}%%
+flowchart TB
+    subgraph "🎨 Presentation Layer"
+        A[User Browser] --> B[JSP / JSTL Views]
+    end
+
+    subgraph "🧠 Controller Layer"
+        B --> C[Servlets<br/>HTTP Request Handler]
+        C --> D[Business Logic]
+    end
+
+    subgraph "🗄️ Data Access Layer"
+        D --> E[DAO Interfaces]
+        E --> F[DAO Implementations]
+        F --> G[JDBC API]
+    end
+
+    subgraph "💾 Database Layer"
+        G --> H[MySQL Database]
+    end
+
+    subgraph "📦 Model Layer"
+        I[POJO / Entity Classes]
+        I --> C
+        H --> I
+    end
+---
 
 
