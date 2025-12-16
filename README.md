@@ -117,53 +117,279 @@ Below is a visual walkthrough of **FoodXpress**, showcasing key user flows and c
 | **Git** | ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white) | Version control system for source code management |
 | **GitHub** | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white) | Repository hosting and project showcasing platform |
 
-## 🏗️ System Architecture
-
-FoodXpress follows a **clean MVC (Model–View–Controller) architecture**, ensuring **separation of concerns**, scalability, and maintainability.
-
 ---
+
+## 🏗️ Architecture
 
 ### 🔄 MVC Architecture Flow
 
 ```mermaid
 %%{init: {
-  "theme": "base",
+  "theme": "default",
   "themeVariables": {
-    "background": "#FAF7F2",
-    "primaryColor": "#FFF3E0",
-    "primaryTextColor": "#2E2E2E",
-    "primaryBorderColor": "#D7CCC8",
-    "lineColor": "#8D6E63",
+    "background": "#FFFFFF",
+    "primaryColor": "#FFE8D6",
+    "primaryTextColor": "#2D3436",
+    "primaryBorderColor": "#FF6B6B",
+    "lineColor": "#4ECDC4",
     "secondaryColor": "#E3F2FD",
     "tertiaryColor": "#E8F5E9",
+    "fontFamily": "Arial, sans-serif",
     "fontSize": "14px"
   }
 }}%%
 flowchart TB
-    subgraph "🎨 Presentation Layer"
-        A[User Browser] --> B[JSP / JSTL Views]
+    subgraph PL["🎨 Presentation Layer"]
+        A["User Browser 🌐"]
+        B["JSP / JSTL Views 📱"]
     end
 
-    subgraph "🧠 Controller Layer"
-        B --> C[Servlets<br/>HTTP Request Handler]
-        C --> D[Business Logic]
+    subgraph CL["🧠 Controller Layer"]
+        C["Servlets ⚡<br/>HTTP Request Handler"]
+        D["Business Logic ⚙️"]
     end
 
-    subgraph "🗄️ Data Access Layer"
-        D --> E[DAO Interfaces]
-        E --> F[DAO Implementations]
-        F --> G[JDBC API]
+    subgraph DAL["🗄️ Data Access Layer"]
+        E["DAO Interfaces 📜"]
+        F["DAO Implementations 💾"]
+        G["JDBC API 🔌"]
     end
 
-    subgraph "💾 Database Layer"
-        G --> H[MySQL Database]
+    subgraph DB["💾 Database Layer"]
+        H["MySQL Database 🗃️"]
     end
 
-    subgraph "📦 Model Layer"
-        I[POJO / Entity Classes]
-        I --> C
-        H --> I
+    subgraph ML["📦 Model Layer"]
+        I["POJO / Entity Classes 📊"]
     end
+
+    A -- "HTTP Request" --> B
+    B -- "Form Submit" --> C
+    C -- "Process Logic" --> D
+    D -- "Data Operation" --> E
+    E -- "CRUD Contract" --> F
+    F -- "SQL Execution" --> G
+    G -- "Database Query" --> H
+    
+    C -- "Create Objects" --> I
+    H -- "ResultSet" --> I
+    I -- "Populated Data" --> B
+
+```
 ---
 
+```text
+FoodApp/
+├── 📦 src/main/java/com/app
+│   ├── 🧠 ## controllers/                # Handles HTTP requests & responses
+│   │   ├── AddressServlet.java
+│   │   ├── AdminMenuServlet.java
+│   │   ├── AdminRestaurantServlet.java
+│   │   ├── CartServlet.java
+│   │   ├── CheckoutServlet.java
+│   │   ├── MenuServlet.java
+│   │   ├── OrderHistoryServlet.java
+│   │   ├── OrderSuccessServlet.java
+│   │   ├── OrderSummaryServlet.java
+│   │   ├── PaymentServlet.java
+│   │   ├── RestaurantServlet.java
+│   │   └── UserServlet.java
+│   │
+│   ├── 📜 dao/                        # DAO interfaces (contracts)
+│   │   ├── AddressDAO.java
+│   │   ├── CartDAO.java
+│   │   ├── MenuItemDAO.java
+│   │   ├── OrderDAO.java
+│   │   ├── RestaurantDAO.java
+│   │   └── UserDAO.java
+│   │
+│   ├── 💾 dao_implementation/         # DAO implementations (JDBC logic)
+│   │   ├── AddressDAOImpl.java
+│   │   ├── CartDAOImpl.java
+│   │   ├── MenuItemDAOImpl.java
+│   │   ├── OrderDAOImpl.java
+│   │   ├── RestaurantDAOImpl.java
+│   │   └── UserDAOImpl.java
+│   │
+│   ├── 📦 models/                     # POJO / Entity classes
+│   │   ├── Address.java
+│   │   ├── Cart.java
+│   │   ├── CartItem.java
+│   │   ├── MenuItem.java
+│   │   ├── Order.java
+│   │   ├── OrderItem.java
+│   │   ├── Restaurant.java
+│   │   └── User.java
+│   │
+│   ├── 🔐 filters/                    # Authentication & authorization
+│   │   └── AuthFilter.java
+│   │
+│   ├── ⚙️ utility/                    # Common utilities
+│   │   └── DBConnection.java
+│   │
+│   └── 🧪 test/                       # Unit & integration tests
+│       ├── TestDBConnection.java
+│       └── TestUserDAO.java
+│
+├── ⚙️ src/main/resources
+│   └── app.properties                 # Application configuration
+│
+├── 🌐 src/main/webapp                 # View layer (JSP + static assets)
+│   ├── 🎨 assets/
+│   │   ├── css/
+│   │   ├── images/
+│   │   └── javascript/
+│   │
+│   ├── 📄 jsp/
+│   │   ├── 🛡️ admin/                  # Admin UI
+│   │   │   ├── dashboard.jsp
+│   │   │   ├── addRestaurant.jsp
+│   │   │   ├── editRestaurant.jsp
+│   │   │   ├── menuListAdmin.jsp
+│   │   │   └── restaurantListAdmin.jsp
+│   │   │
+│   │   ├── 👥 customer/               # Customer UI
+│   │   │   ├── home.jsp
+│   │   │   ├── restaurantList.jsp
+│   │   │   ├── restaurantDetails.jsp
+│   │   │   ├── cart.jsp
+│   │   │   ├── checkout.jsp
+│   │   │   ├── order_summary.jsp
+│   │   │   ├── orderSuccess.jsp
+│   │   │   ├── orderHistory.jsp
+│   │   │   ├── profile.jsp
+│   │   │   └── addresses.jsp
+│   │   │
+│   │   └── 🔗 shared/                 # Reusable JSP fragments
+│   │       ├── header.jspf
+│   │       ├── footer.jspf
+│   │       └── head.jspf
+│   │
+│   ├── 🔐 login.jsp
+│   ├── 📝 register.jsp
+│   ├── 🏠 index.jsp
+│   │
+│   └── ⚙️ WEB-INF/
+│       └── web.xml                    # Servlet & filter configuration
+│
+├── 📸 screenshots/                    # Application UI screenshots
+│
+├── 📦 pom.xml                         # Maven dependencies & build config
+└── 📖 README.md                       # Project documentation
+```
+---
+## 📊 Database Design
 
+### 🗃️ Complete Database Schema
+
+FoodXpress uses a **relational MySQL database** with **8 normalized tables** following **3rd Normal Form (3NF)**. The design ensures **data integrity, scalability, and performance** for handling thousands of concurrent food orders.
+
+---
+
+### 🔗 Entity-Relationship Diagram
+
+```mermaid
+erDiagram
+    users ||--o{ addresses : "has"
+    users ||--o{ orders : "places"
+    users ||--|| carts : "owns"
+    carts ||--o{ cart_items : "contains"
+    restaurants ||--o{ menu_items : "offers"
+    restaurants ||--o{ orders : "receives"
+    addresses ||--o{ orders : "used_for"
+    orders ||--o{ order_items : "contains"
+    menu_items ||--o{ cart_items : "added_to"
+    menu_items ||--o{ order_items : "ordered_as"
+
+    users {
+        int user_id PK
+        varchar(100) name
+        varchar(50) username UK
+        varchar(255) password
+        varchar(100) email UK
+        varchar(15) phone
+        varchar(255) address
+        enum role
+        datetime created_date
+        datetime last_login_date
+    }
+
+    addresses {
+        int address_id PK
+        int user_id FK
+        varchar(255) street
+        varchar(100) city
+        varchar(100) state
+        varchar(20) zip
+        varchar(255) landmark
+        timestamp created_at
+    }
+
+    restaurants {
+        int restaurant_id PK
+        varchar(100) name
+        text description
+        varchar(50) cuisine_type
+        varchar(255) address
+        varchar(100) city
+        varchar(100) state
+        varchar(20) zip
+        varchar(15) phone
+        varchar(100) email
+        decimal rating
+        int delivery_time
+        varchar(255) image_url
+        boolean is_active
+        timestamp created_at
+    }
+
+    menu_items {
+        int menu_item_id PK
+        int restaurant_id FK
+        varchar(150) name
+        text description
+        decimal price
+        varchar(50) category
+        boolean is_veg
+        boolean is_available
+        varchar(255) image_url
+        timestamp created_at
+    }
+
+    carts {
+        int cart_id PK
+        int user_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    cart_items {
+        int cart_item_id PK
+        int cart_id FK
+        int menu_item_id FK
+        int quantity
+        timestamp added_at
+    }
+
+    orders {
+        int order_id PK
+        int user_id FK
+        int restaurant_id FK
+        int address_id FK
+        decimal total_amount
+        enum status
+        enum payment_method
+        enum payment_status
+        text delivery_instructions
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    order_items {
+        int order_item_id PK
+        int order_id FK
+        int menu_item_id FK
+        int quantity
+        decimal price_at_order
+        timestamp created_at
+    }
