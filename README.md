@@ -290,6 +290,13 @@ FoodXpress uses a **relational MySQL database** with **8 normalized tables** fol
 
 ```mermaid
 erDiagram
+    %% Styling for better GitHub visibility
+    classDef userEntity fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    classDef restaurantEntity fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef orderEntity fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef cartEntity fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef bridgeEntity fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    
     users ||--o{ addresses : "has"
     users ||--o{ orders : "places"
     users ||--|| carts : "owns"
@@ -355,7 +362,6 @@ erDiagram
         varchar(255) image_url
         timestamp created_at
     }
-
     carts {
         int cart_id PK
         int user_id FK
@@ -370,7 +376,6 @@ erDiagram
         int quantity
         timestamp added_at
     }
-
     orders {
         int order_id PK
         int user_id FK
@@ -383,7 +388,7 @@ erDiagram
         text delivery_instructions
         timestamp created_at
         timestamp updated_at
-    }
+   }
 
     order_items {
         int order_item_id PK
@@ -392,4 +397,4 @@ erDiagram
         int quantity
         decimal price_at_order
         timestamp created_at
-    }
+ }
