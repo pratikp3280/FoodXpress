@@ -398,3 +398,280 @@ erDiagram
         decimal price_at_order
         timestamp created_at
  }
+```
+---
+## 🚀 Getting Started
+
+Follow the steps below to **set up and run FoodXpress locally** on your system.
+
+---
+
+### ✅ Prerequisites
+
+Ensure the following tools are installed before running the project:
+
+- ☕ **Java JDK 17**
+- 🌐 **Apache Tomcat 9**
+- 🗄️ **MySQL Server**
+- 🛠️ **Eclipse IDE** (Recommended for Java EE projects)
+- 🔄 **Git** (for cloning the repository)
+
+---
+
+### ⚙️ Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/pratikp3280/FoodXpress.git
+   ```
+
+2. **Import into Eclipse**
+   - Open **Eclipse**
+   - Go to: `File → Import → Existing Maven Projects`
+   - Select the cloned `FoodXpress/FoodApp` directory
+   - Finish the import
+
+---
+
+### 🗄️ Database Setup
+
+1. Open **MySQL** and create the database:
+   ```sql
+   CREATE DATABASE food_delivery_app;
+   ```
+
+2. Execute the provided SQL scripts to create tables:
+   - `users`
+   - `addresses`
+   - `restaurants`
+   - `menu_items`
+   - `carts`
+   - `cart_items`
+   - `orders`
+   - `order_items`
+
+3. Ensure the database is running on:
+   - **Host**: `localhost`
+   - **Port**: `3306`
+
+---
+
+### 🔧 Configuration
+
+1. Open the configuration file:
+   ```text
+   src/main/resources/app.properties
+   ```
+
+2. Update your MySQL credentials:
+   ```properties
+   db.url=jdbc:mysql://localhost:3306/food_delivery_app
+   db.username=your_mysql_username
+   db.password=your_mysql_password
+   ```
+
+3. Save the file after updating the credentials.
+
+---
+
+### ▶️ Running the Server
+
+1. Right-click the project in **Eclipse**
+2. Select: `Run As → Run on Server`
+3. Choose **Apache Tomcat 9**
+4. Finish and wait for deployment
+
+Once the server starts, access the application at:
+   ```text
+   http://localhost:8080/FoodXpress/
+   ```
+---
+## Flow Diagrams
+
+```mermaid
+flowchart LR
+    %% User Flow Diagram
+    subgraph UserFlow
+        direction LR
+        A[🏠 Landing Page] --> B[🔐 Register / Login]
+        B --> C[🍽️ Browse Restaurants]
+        C --> D[📋 Explore Menu]
+        D --> E[🛒 Manage Cart]
+        E --> F[📍 Select Address]
+        F --> G[🚀 Place Order]
+        G --> H[📦 Order Confirmation]
+        H --> I[🕒 Order History]
+        I --> J[👤 Profile Management]
+    end
+
+    %% Admin Flow Diagram
+    subgraph AdminFlow
+        direction LR
+        A1[🔐 Admin Login] --> B1[🏪 Manage Restaurants]
+        B1 --> C1[🍽️ Manage Menu Items]
+        C1 --> D1[📦 Order Monitoring]
+        D1 --> E1[📊 System Oversight]
+    end
+```
+## 🔐 Security Implementation
+
+FoodXpress implements essential web application security practices to protect user data, restrict unauthorized access, and ensure safe request handling.
+
+---
+
+### 🔑 Authentication & Authorization
+
+- **Session-based authentication** using `HttpSession`
+- Maintains user identity across requests after login
+- **Role-based access control** for:
+  - Customers
+  - Admins
+- Unauthorized users are redirected to the login page
+
+---
+
+### 🛡️ Route Protection (Servlet Filters)
+
+- Protected URLs secured using a custom `AuthFilter`
+- Filter checks:
+  - Active user session
+  - Valid user role before allowing access
+- Prevents direct access to:
+  - Admin JSP pages
+  - Order, cart, and checkout endpoints
+
+---
+
+### 🗄️ Secure Data Handling
+
+- User credentials stored securely in the database
+- Sensitive operations validated server-side
+- Database access abstracted using **DAO pattern**
+- No direct database access from JSP pages
+
+---
+
+### ⚠️ Input Validation & Error Handling
+
+- Server-side validation for:
+  - Login and registration forms
+  - Address and order data
+- Graceful error handling for invalid inputs
+- User-friendly error messages without exposing system details
+
+---
+
+### 🧼 Session & Resource Manage
+- Automatic session invalidation on logout
+- Prevents session fixation by regenerating sessions after login
+- Proper closing of JDBC resources to avoid leaks
+
+---
+
+### 🎯 Security Design Highlights
+
+- Authentication handled at the controller level
+- Authorization enforced via servlet filters
+- MVC separation prevents logic leakage to views
+- Database operations isolated from presentation layer
+
+---
+## 🔧 Technical Details
+
+This section provides an overview of FoodXpress's **backend design**, **request flow**, and **core implementation patterns**.
+
+---
+
+### 🧱 MVC Request–Response Lifecycle
+
+1. 🌐 **JSP UI**: Users interact with JSPs for input.
+2. 📤 **Servlet Controllers**: Handle HTTP requests, validate inputs, manage sessions, and execute business logic.
+3. 🗄️ **DAO Layer**: Delegates database operations using DAO interfaces and JDBC for MySQL interaction.
+4. 📋 **Data Mapping**: Retrieved data is converted to POJO/entity objects.
+5. 📥 **Response Rendering**: Data is sent back to JSP views for the user.
+
+---
+
+### 🗂️ DAO Pattern
+
+- 📜 **Interfaces**: Define database operations for loose coupling and easy testing.
+- 💾 **Implementations**: Include SQL logic and handle JDBC operations (connections, statements, result sets).
+- 🔄 **Flexibility**: Switch persistence mechanisms without affecting the app’s controllers.
+
+---
+
+### 🔌 JDBC Connection Management
+
+- 🔗 Centralized `DBConnection` utility for managing database connections.
+- 📄 Connection properties loaded from `app.properties`, ensuring flexibility.
+- 🧹 Proper resource handling to close:
+  - Connections
+  - Statements
+  - ResultSets
+
+---
+
+### 🧾 Session Management
+
+- 🔐 User sessions established post-login, storing user IDs and roles (customer/admin).
+- ⏱️ Sessions validated for all protected routes.
+- 🚪 Explicit session invalidation during logout.
+
+---
+
+### 🧪 Form Handling & Validation
+
+- ❌ **Server-Side Validation**: Ensures inputs like login and registration data are properly checked.
+- 📢 Error messages are forwarded to JSPs with meaningful user feedback.
+- 🚫 Prevents invalid data submission and app crashes.
+
+---
+
+### ⚙️ Application Configuration
+
+- 🗂️ **Centralized Settings**: Stored in `app.properties`, including:
+  - 🔑 Database URL
+  - 🔑 Credentials
+- 📦 Prevents hardcoding sensitive values into the codebase.
+
+---
+
+### 🎯 Technical Highlights
+
+- 🧠 **Separation of Concerns**: MVC ensures clear modular design.
+- 🔄 **Reusable Persistence Layer**: DAO-based, easily testable and modular.
+- 🔐 **Secure Design**: Session-based authentication and validation for all routes.
+- 🧱 **Scalability**: A maintainable, structured codebase tailored for real-world Java EE projects.
+- 🛠️ **Standard Practices**: Built on robust Java EE design principles.
+
+---
+## 🎖️ Project Highlights
+
+FoodXpress goes beyond a basic CRUD application — it simulates a **real-world food delivery platform** with clean architecture, scalable design, and production-like workflows.
+
+---
+
+### 🌟 What Makes FoodXpress Stand Out
+
+- 🧱 **Java EE Core**: Built with **Servlets + JSP**, avoiding heavy frameworks.
+- 🏗️ **Clean MVC Architecture**: Enforces strict separation of concerns.
+- 🗄️ **Relational Database Schema**: Inspired by real-world food delivery systems.
+- 🔄 **DAO Abstraction**: Interface-based database operations for flexibility.
+- 🔐 **Session-Based Authentication**: Secured using servlet filters.
+- 🛒 **Persistent Cart**: Database-backed cart storage for seamless user experience.
+- 📦 **Order Management**: Full order lifecycle implementation.
+- 📍 **Multiple Delivery Addresses**: Support for multiple addresses per user.
+- 🧪 **Server-Side Validation**: Ensures data integrity and robust error handling.
+
+---
+
+### 👨‍💻 Engineering-Focused Highlights
+
+- 📁 **Enterprise-Style Folder Structure**: Organized for real-world development.
+- 🧠 **Clear Request–Response Lifecycle**: Designed for maintainability and scalability.
+- 🔌 **Centralized JDBC Management**: Reusable connection utility for all database operations.
+- 🧩 **Modular, Maintainable Code**: Encourages reuse and simplifies future development.
+- ⚙️ **Externalized Configurations**: Secure `app.properties` setup for flexibility.
+- 🚀 **Extensible Design**: Easy to add new features and scale the system.
+
+---
