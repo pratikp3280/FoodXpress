@@ -675,3 +675,61 @@ FoodXpress goes beyond a basic CRUD application — it simulates a **real-world 
 - 🚀 **Extensible Design**: Easy to add new features and scale the system.
 
 ---
+
+## 🔮 Future Enhancements
+
+The following enhancements focus on **scalability, security, user experience, and production readiness**, adding maximum real-world value to **FoodXpress**.
+
+### 🚀 High-Impact Enhancements
+
+- 🔐 **Advanced Authentication & Security**
+  - Password hashing (BCrypt)
+  - Forgot password & secure reset flow
+  - CSRF & XSS protection
+
+- 💳 **Online Payment Gateway Integration**
+  - UPI / Card payment support
+  - Payment verification & status tracking
+
+- 🚴 **Delivery Partner Module**
+  - Assign orders to delivery agents
+  - Real-time order status updates
+
+- ⭐ **User Reviews & Ratings System**
+  - Rate restaurants and food items
+  - Improve trust and discovery experience
+
+- 📱 **Responsive & Mobile-First UI**
+  - Optimized layouts for mobile & tablet
+  - Enhanced UI interactions & usability
+
+- 🧠 **Architecture Upgrade (Spring Boot + REST APIs)**
+  - Migrate to Spring Boot
+  - Expose REST APIs for mobile app integration
+---
+
+## 📬 Contact Information
+
+👨‍💻 **Developer:** Pratik P Patil  
+🎓 **Role:** Java Full Stack Developer  
+📱 **Mobile:** +91-8217483820  
+📧 **Email:** pattupammu123@gmail.com  
+
+### 🌐 Connect With Me
+
+<p align="left">
+  <a href="https://github.com/pratikp3280" target="_blank">
+    <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
+  </a>
+  
+  <a href="https://www.linkedin.com/in/pratik-p-patil-1485aa1bb/" target="_blank">
+    <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"/>
+  </a>
+  
+  <a href="mailto:pattupammu123@gmail.com">
+    <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white"/>
+  </a>
+</p>
+
+---
+⭐ *If you found this project useful, feel free to star the repository and connect with me!* 🚀
